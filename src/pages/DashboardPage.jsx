@@ -1,37 +1,71 @@
 import React from 'react';
-import { LaptopOutlined, NotificationOutlined, UserOutlined } from '@ant-design/icons';
-import { Breadcrumb, Layout, Menu, theme } from 'antd';
+import { AppstoreOutlined, HomeOutlined, LogoutOutlined, TruckOutlined, UserOutlined } from '@ant-design/icons';
+import { Layout, Menu, Typography, theme } from 'antd';
+import { useDispatch } from 'react-redux';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { logout } from '../features/auth/authSlice';
+
 const { Header, Content, Sider } = Layout;
+const { Text } = Typography;
 
 const HEADER_HEIGHT = 64;
-const SIDEBAR_WIDTH = 190;
+const SIDEBAR_WIDTH = 260;
 
-const items1 = ['1', '2', '3'].map(key => ({
-  key,
-  label: `nav ${key}`,
-}));
+const topMenuItems = [
+  { key: '/dashboard/profile', icon: <UserOutlined />, label: 'Profile' },
+  { key: 'logout', icon: <LogoutOutlined />, label: 'Logout' },
+];
 
-const items2 = [UserOutlined, LaptopOutlined, NotificationOutlined].map((icon, index) => {
-  const key = String(index + 1);
-  return {
-    key: `sub${key}`,
-    icon: React.createElement(icon),
-    label: `subnav ${key}`,
-    children: Array.from({ length: 20 }).map((_, j) => ({
-      key: `${index}-${j}`,
-      label: `option ${j + 1}`,
-    })),
-  };
-});
+const sideMenuItems = [
+  {
+    key: '/dashboard/home',
+    icon: <HomeOutlined />,
+    label: 'Home',
+  },
+  {
+    key: '/dashboard/shipment',
+    icon: <TruckOutlined />,
+    label: 'Shipment',
+  },
+  {
+    key: 'accounting',
+    icon: <AppstoreOutlined />,
+    label: 'Accounting',
+    children: [
+      { key: '/dashboard/accounting/chart-of-accounts', label: 'Chart of Accounts' },
+      { key: '/dashboard/accounting/bank-accounts', label: 'Bank Accounts' },
+      { key: '/dashboard/accounting/cheque-register', label: 'Cheque Register' },
+      { key: '/dashboard/accounting/cash-transfer', label: 'Cash Transfer' },
+      { key: '/dashboard/accounting/journal-voucher', label: 'Journal Voucher' },
+    ],
+  },
+];
 
 const DashboardPage = () => {
   const {
-    token: { colorBgContainer, borderRadiusLG },
+    token: { colorBgContainer },
   } = theme.useToken();
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const onTopMenuClick = ({ key }) => {
+    if (key === 'logout') {
+      dispatch(logout());
+      navigate('/login', { replace: true });
+      return;
+    }
+
+    navigate(key);
+  };
+
+  const onSideMenuClick = ({ key }) => {
+    navigate(key);
+  };
+
   return (
-    <Layout style={{ height: '100vh' }}>
-      {/* FIXED HEADER */}
+    <Layout style={{ minHeight: '100vh' }}>
       <Header
         style={{
           position: 'fixed',
@@ -41,22 +75,25 @@ const DashboardPage = () => {
           zIndex: 1000,
           display: 'flex',
           alignItems: 'center',
-          
+          justifyContent: 'space-between',
+          paddingInline: 20,
         }}
-        className='bg-dark w-100'
       >
+        <Text style={{ color: '#fff', marginBottom: 0 }} strong>
+          LogiDesk Admin
+        </Text>
+
         <Menu
           theme="dark"
-          className='w-100'
           mode="horizontal"
-          defaultSelectedKeys={['1']}
-          items={items1}
-          style={{ flex: 1 }}
+          selectedKeys={[location.pathname]}
+          items={topMenuItems}
+          onClick={onTopMenuClick}
+          style={{ minWidth: 220, justifyContent: 'flex-end', flex: '0 0 auto' }}
         />
       </Header>
 
       <Layout style={{ marginTop: HEADER_HEIGHT }}>
-        {/* FIXED SIDEBAR */}
         <Sider
           width={SIDEBAR_WIDTH}
           style={{
@@ -65,40 +102,31 @@ const DashboardPage = () => {
             top: HEADER_HEIGHT,
             height: `calc(100vh - ${HEADER_HEIGHT}px)`,
             background: colorBgContainer,
-            overflow: 'hidden',
-            backgroundColor:"#00000"
+            overflow: 'auto',
+            borderRight: '1px solid #f0f0f0',
           }}
         >
-          <div className="sidebar-scroll">
-            <Menu
-              mode="inline"
-               style={{ borderInlineEnd: 0 }}
-              items={items2}
-            />
-          </div>
+          <Menu
+            mode="inline"
+            items={sideMenuItems}
+            onClick={onSideMenuClick}
+            selectedKeys={[location.pathname]}
+            defaultOpenKeys={['accounting']}
+            style={{ height: '100%', borderInlineEnd: 0 }}
+          />
         </Sider>
 
-        {/* CONTENT AREA */}
         <Layout style={{ marginLeft: SIDEBAR_WIDTH }}>
           <Content
             style={{
-              height: `calc(100vh - ${HEADER_HEIGHT}px)`,
+              minHeight: `calc(100vh - ${HEADER_HEIGHT}px)`,
               overflow: 'auto',
-               
-              background: colorBgContainer,
+              background: '#edf2f7',
+              padding: 24,
             }}
           >
-            
-
-            <div
-              style={{
-                minHeight: 1200,
-                background: '#edf2f7',
-                borderRadius: borderRadiusLG,
-                padding: 24,
-              }}
-            >
-              Scrollable Content Area
+            <div style={{ background: '#fff', borderRadius: 8, minHeight: '100%', padding: 24 }}>
+              <Outlet />
             </div>
           </Content>
         </Layout>
