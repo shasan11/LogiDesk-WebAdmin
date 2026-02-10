@@ -1,31 +1,28 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
+
 const CheckAuthentication = () => {
-   const [auth, setAuth] = useState(false);
-  const backend_url = import.meta.env.VITE_APP_BACKEND_URL;
+  const [auth, setAuth] = useState(false);
+  const backendUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
   const accessToken = localStorage.getItem("accessToken");
+
   useEffect(() => {
-   
     if (!accessToken) {
-       setAuth(false);
+      setAuth(false);
       return;
     }
+
     axios
-      .post(`${backend_url}/auth/jwt/verify`, { token: accessToken })
-      .then((response) => {
-        if (response.status === 200) {
-           setAuth(true);
-        } else {
-           setAuth(false);
-        }
+      .post(`${backendUrl}/auth/jwt/verify/`, { token: accessToken })
+      .then(({ status }) => {
+        setAuth(status === 200);
       })
-      .catch((error) => {
+      .catch(() => {
         setAuth(false);
-      })
-      .finally(() => {
-         console.log("[AuthCheck] Authentication check completed. Auth state set to:", auth);});
-  }, []);
-  console.log("[AuthCheck] Returning auth state:", auth);
+      });
+  }, [accessToken, backendUrl]);
+
   return auth;
 };
+
 export default CheckAuthentication;
