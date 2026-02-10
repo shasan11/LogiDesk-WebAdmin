@@ -3,8 +3,8 @@ import { theme } from 'antd';
 export const antdTheme = {
   algorithm: theme.defaultAlgorithm,
   token: {
-    colorPrimary: '#141a27',
-    colorInfo: '#343e56',
+    colorPrimary: '#2563eb',
+    colorInfo: '#2563eb',
     colorSuccess: '#16a34a',
     colorWarning: '#d97706',
     colorError: '#dc2626',
