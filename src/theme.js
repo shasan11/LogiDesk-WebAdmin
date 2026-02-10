@@ -8,7 +8,7 @@ export const antdTheme = {
     colorSuccess: '#16a34a',
     colorWarning: '#d97706',
     colorError: '#dc2626',
-    borderRadius: 8,
+    borderRadius: 3,
     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif',
     colorBgLayout: '#f5f7fb',
   },
@@ -19,7 +19,7 @@ export const antdTheme = {
       siderBg: '#ffffff',
     },
     Card: {
-      borderRadiusLG: 12,
+      borderRadiusLG: 5,
     },
     Input: {
       controlHeight: 40,
