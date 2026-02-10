@@ -10,7 +10,7 @@ export const antdTheme = {
     colorError: '#dc2626',
     borderRadius: 3,
     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif',
-    colorBgLayout: '#f5f7fb',
+    colorBgLayout: '#edf2f7',
   },
   components: {
     Layout: {

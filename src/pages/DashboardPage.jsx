@@ -1,56 +1,110 @@
-import { Button, Card, Col, Layout, Row, Space, Typography } from 'antd';
-import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { logout } from '../features/auth/authSlice';
+import React from 'react';
+import { LaptopOutlined, NotificationOutlined, UserOutlined } from '@ant-design/icons';
+import { Breadcrumb, Layout, Menu, theme } from 'antd';
+const { Header, Content, Sider } = Layout;
 
-const { Header, Content } = Layout;
+const HEADER_HEIGHT = 64;
+const SIDEBAR_WIDTH = 190;
 
-const routes = [
-  { title: 'Login', path: '/login', description: 'Authentication entry point route.' },
-  { title: 'Forgot Password', path: '/forgot-password', description: 'Request password reset email.' },
-  { title: 'Reset Password', path: '/reset-password', description: 'Submit uid, token and new password.' },
-];
+const items1 = ['1', '2', '3'].map(key => ({
+  key,
+  label: `nav ${key}`,
+}));
 
-export default function DashboardPage() {
-  const dispatch = useDispatch();
+const items2 = [UserOutlined, LaptopOutlined, NotificationOutlined].map((icon, index) => {
+  const key = String(index + 1);
+  return {
+    key: `sub${key}`,
+    icon: React.createElement(icon),
+    label: `subnav ${key}`,
+    children: Array.from({ length: 20 }).map((_, j) => ({
+      key: `${index}-${j}`,
+      label: `option ${j + 1}`,
+    })),
+  };
+});
+
+const DashboardPage = () => {
+  const {
+    token: { colorBgContainer, borderRadiusLG },
+  } = theme.useToken();
 
   return (
-    <Layout style={{ minHeight: '100vh', background: '#f8fafc' }}>
+    <Layout style={{ height: '100vh' }}>
+      {/* FIXED HEADER */}
       <Header
         style={{
-          background: '#fff',
-          borderBottom: '1px solid #e2e8f0',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1000,
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
+          
         }}
+        className='bg-dark w-100'
       >
-        <Typography.Title level={4} style={{ margin: 0 }}>
-          LogiDesk Admin Dashboard
-        </Typography.Title>
-        <Button danger onClick={() => dispatch(logout())}>
-          Logout
-        </Button>
+        <Menu
+          theme="dark"
+          className='w-100'
+          mode="horizontal"
+          defaultSelectedKeys={['1']}
+          items={items1}
+          style={{ flex: 1 }}
+        />
       </Header>
-      <Content style={{ padding: 24 }}>
-        <Card>
-          <Space direction="vertical" size={20} style={{ width: '100%' }}>
-            <Typography.Text type="secondary">
-              You are authenticated with JWT access token and can navigate through linked routes below.
-            </Typography.Text>
-            <Row gutter={[16, 16]}>
-              {routes.map((route) => (
-                <Col xs={24} md={12} lg={8} key={route.path}>
-                  <Card title={route.title} variant="outlined">
-                    <Typography.Paragraph>{route.description}</Typography.Paragraph>
-                    <Link to={route.path}>Open {route.title}</Link>
-                  </Card>
-                </Col>
-              ))}
-            </Row>
-          </Space>
-        </Card>
-      </Content>
+
+      <Layout style={{ marginTop: HEADER_HEIGHT }}>
+        {/* FIXED SIDEBAR */}
+        <Sider
+          width={SIDEBAR_WIDTH}
+          style={{
+            position: 'fixed',
+            left: 0,
+            top: HEADER_HEIGHT,
+            height: `calc(100vh - ${HEADER_HEIGHT}px)`,
+            background: colorBgContainer,
+            overflow: 'hidden',
+            backgroundColor:"#00000"
+          }}
+        >
+          <div className="sidebar-scroll">
+            <Menu
+              mode="inline"
+               style={{ borderInlineEnd: 0 }}
+              items={items2}
+            />
+          </div>
+        </Sider>
+
+        {/* CONTENT AREA */}
+        <Layout style={{ marginLeft: SIDEBAR_WIDTH }}>
+          <Content
+            style={{
+              height: `calc(100vh - ${HEADER_HEIGHT}px)`,
+              overflow: 'auto',
+               
+              background: colorBgContainer,
+            }}
+          >
+            
+
+            <div
+              style={{
+                minHeight: 1200,
+                background: '#edf2f7',
+                borderRadius: borderRadiusLG,
+                padding: 24,
+              }}
+            >
+              Scrollable Content Area
+            </div>
+          </Content>
+        </Layout>
+      </Layout>
     </Layout>
   );
-}
+};
+
+export default DashboardPage;
