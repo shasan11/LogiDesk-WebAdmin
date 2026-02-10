@@ -2,23 +2,17 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import { ConfigProvider, theme } from 'antd';
+import { ConfigProvider } from 'antd';
+import 'antd/dist/reset.css';
 import App from './App';
 import { store } from './app/store';
+import { antdTheme } from './theme';
+import './global.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Provider store={store}>
-      <ConfigProvider
-        theme={{
-          algorithm: theme.defaultAlgorithm,
-          token: {
-            colorPrimary: '#2563eb',
-            borderRadius: 8,
-            fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif',
-          },
-        }}
-      >
+      <ConfigProvider theme={antdTheme}>
         <BrowserRouter>
           <App />
         </BrowserRouter>
